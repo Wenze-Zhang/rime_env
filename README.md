@@ -23,7 +23,7 @@
 # 同步上游词库/lua/opencc（建议每 1~2 个月一次；上游改名会报错中止，按提示修清单）
 bash scripts/update-upstream.sh
 
-# 安装/重装主题软链，并把默认主题设为 catppuccin-mocha
+# 安装/重装主题软链，并把默认主题设为 catppuccin_mocha
 bash scripts/install-themes.sh
 ```
 
@@ -39,7 +39,7 @@ bash scripts/install-themes.sh
 
 vendor 于 `themes/`，经 `install-themes.sh` 软链到 `~/.local/share/fcitx5/themes/`：
 
-- `catppuccin-mocha`（默认）— 来自 [catppuccin/fcitx5](https://github.com/catppuccin/fcitx5)（Mocha/Mauve）
+- `catppuccin_mocha`（默认）— 来自 [catppuccin/fcitx5](https://github.com/catppuccin/fcitx5)（Mocha/Mauve）
 - `nord-dark` — 来自 [tonyfettes/fcitx5-nord](https://github.com/tonyfettes/fcitx5-nord)
 
 切换：`fcitx5-configtool` → 附加组件 → 经典用户界面 → 主题。

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# 将仓库内 themes/ 下的主题软链到 fcitx5 主题目录，并把默认主题设为 catppuccin-mocha。
+# 将仓库内 themes/ 下的主题软链到 fcitx5 主题目录，并把默认主题设为 catppuccin_mocha。
 # 用法：bash scripts/install-themes.sh
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 THEME_DST="$HOME/.local/share/fcitx5/themes"
 CLASSICUI_CONF="$HOME/.config/fcitx5/conf/classicui.conf"
-DEFAULT_THEME="catppuccin-mocha"
+DEFAULT_THEME="catppuccin_mocha"
 
 mkdir -p "$THEME_DST"
 for src in "$REPO_DIR"/themes/*/; do
