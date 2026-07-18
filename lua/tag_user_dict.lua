@@ -24,32 +24,32 @@ function M.processCandidate(cand)
     end
 end
 
--- 这个函数处理输入并对每个候选项应用条件。
--- @param input 包含候选项的输入对象。
--- @param env 环境对象。
+-- process input and apply conditions to each candidate
+-- @param input object containing candidates
+-- @param env environment object
 function M.func(input, env)
-    -- 定义要应用于每个候选项的条件。
+    -- conditions applied to each candidate
     local conditions = {
-        {type = "user_table", value = M.user_table}, -- 用户表条件
-        {type = "sentence", value = M.sentence}, -- 句子条件
-        {type = "user_phrase", value = M.user_phrase}, -- 用户短语条件
-        {type = "phrase", value = M.phrase}, -- 短语条件
-        {type = "completion", value = M.completion} -- 完成条件
+        {type = "user_table", value = M.user_table}, -- user table condition
+        {type = "sentence", value = M.sentence}, -- sentence condition
+        {type = "user_phrase", value = M.user_phrase}, -- user phrase condition
+        {type = "phrase", value = M.phrase}, -- phrase condition
+        {type = "completion", value = M.completion} -- completion condition
     }
 
-    -- 遍历输入中的每个候选项。
+    -- iterate candidates in input
     for cand in input:iter() do
-        -- 对候选项应用条件。
+        -- apply conditions to candidate
         for _, condition in ipairs(conditions) do
             if cand.type == condition.type and condition.value then
-                -- 处理候选项。
+                -- handle candidate
                 M.processCandidate(cand)
-                -- 将条件值追加到候选项的注释中。
+                -- append condition value to candidate comment
                 cand:get_genuine().comment = cand.comment .. condition.value
                 break
             end
         end
-        -- 返回候选项。
+        -- yield candidate
         yield(cand)
     end
 end

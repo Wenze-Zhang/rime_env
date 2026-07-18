@@ -1,7 +1,7 @@
 # Rime dictionary
 # encoding: utf-8
 #https://github.com/amzxyz/RIME-LMDG
-#错音错字对照表
+# wrong sound and wrong char mapping table
 ---
 name: rime_mint.correlation
 version: "2026-06-29"

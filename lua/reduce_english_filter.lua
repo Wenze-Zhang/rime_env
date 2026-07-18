@@ -1,9 +1,9 @@
--- 降低部分英语单词在候选项的位置
--- https://dvel.me/posts/make-rime-en-better/#短单词置顶的问题
--- 感谢大佬 @[Shewer Lu](https://github.com/shewer) 指点
--- YummyCocoa修改: 
---   1. 在不设置 mode 情况下，调整为默认全降模式（原本为 none 模式）；
---   2. all 会合并默认全降内容和自定义内容。
+-- lower some english words in candidates
+-- see dvel blog make rime en better
+-- thanks to Shewer Lu
+-- YummyCocoa changes
+--   1 default to all mode when mode is unset was none
+--   2 all merges builtin list with custom words
 
 local M = {}
 
@@ -11,11 +11,11 @@ function M.init(env)
     local config = env.engine.schema.config
     env.name_space = env.name_space:gsub("^*", "")
 
-    -- 要降低到的位置
+    -- target position
     local idx = config:get_int(env.name_space .. "/idx")
     env.idx = (idx and idx > 0) and idx or 2
 
-    -- 所有 3~4 位长度、前 2~3 位是完整拼音、最后一位是声母的单词
+    -- words of length 3 to 4 with full pinyin prefix and final initial letter
     local all = { "aid", "aim", "air", "and", "ann", "ant", "any", "bad", "bag", "bail", "bait", "bam", "ban", "band",
         "bang", "bank", "bans", "bar", "bat", "bay", "bend", "benq", "bent", "benz", "bib", "bid", "bien", "big", "bin",
         "bind", "bit", "biz", "bob", "boc", "bop", "bos", "bot", "bow", "box", "boy", "bud", "buf", "bug", "bus",
@@ -47,7 +47,7 @@ function M.init(env)
         "ties", "tim", "tin", "tip", "tit", "tour", "tout", "tum", "wag", "wait", "wail", "wan", "wand", "womens",
         "want", "wap", "war", "was", "wax", "way", "weir", "went", "won", "wow", "yan", "yang", "yen", "yep", "yes",
         "yet", "yin", "your", "yum", "zen", "zip",
-        -- 下面是其他长度的
+        -- other lengths below
         "quanx", "eg",
 	}
     local all_map = {}
@@ -55,11 +55,11 @@ function M.init(env)
         all_map[v] = true
     end
 
-    -- 自定义
+    -- custom
     local words = {}
     local list = config:get_list(env.name_space .. "/words")
 
-    -- 当 words 没有定义，赋值长度为0
+    -- when words is undefined set length zero
     local listSize = list and list.size or 0
 
     for i = 0, listSize - 1 do
@@ -67,10 +67,10 @@ function M.init(env)
         words[word] = true
     end
 
-    -- 模式(YummyCocoa: all 会合并默认全降内容)
+    -- mode YummyCocoa all merges builtin list
     local mode = config:get_string(env.name_space .. "/mode")
     if mode == "all" then
-        -- 合并 all 和 words
+        -- merge all and words
         local mergedTable = {}
         for key in pairs(all_map) do
             mergedTable[key] = true
@@ -92,8 +92,8 @@ function M.func(input, env)
     -- filter start
     local code = env.engine.context.input
     if env.map[code] then
-        -- Translation 可重复迭代，但原实现会产生重复候选，再依赖 uniquifier
-        -- 去重。这里一次遍历就完成同样的稳定降频排序。
+        -- translation is re iterable but old code produced duplicates then relied on uniquifier
+        -- one pass gives the same stable reordering
         local all_cands = {}
         local result = {}
         local pending_cands = {}
@@ -119,14 +119,14 @@ function M.func(input, env)
             end
         end
 
-        -- 候选不足以把英文词真正后移时，保持原始顺序。
+        -- keep original order when candidates are too few to move the word
         for _, cand in ipairs(released and result or all_cands) do
             yield(cand)
         end
         return
     end
 
-    -- 未命中降频码，直接透传。
+    -- no reduce code hit pass through
     for cand in input:iter() do
         yield(cand)
     end

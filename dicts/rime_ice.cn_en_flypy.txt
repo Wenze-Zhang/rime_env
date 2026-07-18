@@ -4,10 +4,10 @@
 #@/db_type	tabledb
 #
 # https://github.com/iDvel/rime-ice
-# ------- 中英混输词库 for 小鹤双拼 -------
-# 由 others/cn_en.txt 自动生成
+# chinese english mixed dict for flypy double pinyin
+# auto generated from others/cn_en.txt
 #
-# 此行之后不能写注释
+# no comments allowed after this line
 X光	Xgl
 X光	xgl
 X光片	Xglpm

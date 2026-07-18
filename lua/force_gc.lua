@@ -1,6 +1,6 @@
--- 节流 GC
--- 详情 https://github.com/hchunhui/librime-lua/issues/307
--- 默认每 16 次翻译调用一次；可在方案中通过 force_gc/interval 覆写。
+-- throttled gc
+-- see librime-lua issue 307
+-- default every 16 translations override via force_gc/interval
 local function force_gc(_, _, env)
     if not env.gc_interval then
         local configured = env.engine.schema.config:get_int("force_gc/interval")

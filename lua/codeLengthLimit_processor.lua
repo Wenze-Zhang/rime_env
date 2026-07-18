@@ -1,8 +1,8 @@
 local M = {}
 
-local kRejected = 0 -- 输入法拒绝处理
-local kAccepted = 1 -- 输入法接受处理，并由本processor处理
-local kNoop = 2 -- 交由输入法下一个processor判断是否处理
+local kRejected = 0 -- ime rejects the key
+local kAccepted = 1 -- ime accepts handled by this processor
+local kNoop = 2 -- pass to the next processor
 
 function M.init(env)
   local config = env.engine.schema.config
@@ -13,7 +13,7 @@ function M.func(key, env)
   local ctx = env.engine.context
   local config = env.engine.schema.config
 
-  -- 限制
+  -- limit
   local length_limit = config:get_string(env.name_space)
   if(length_limit~=nil) then
     if(string.len(ctx.input) > tonumber(length_limit)) then
@@ -23,7 +23,7 @@ function M.func(key, env)
     end
   end
 
-  -- 放行
+  -- pass
   return kNoop
 end
 

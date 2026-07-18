@@ -3,19 +3,19 @@
 #
 #
 # https://github.com/iDvel/rime-ice
-# ------- 补充的英文词汇 -------
+# extra english words
 #
 ---
 name: rime_ice.en_ext
 version: "2026-06-14"
 sort: by_weight
 ...
-# 一些杂项
+# misc
 &nbsp;	&nbsp;
 .DS_Store	.DS_Store
 README.md	README.md
 
-# 按键
+# keys
 Fn	Fn
 cmd	cmd
 command	command
@@ -35,7 +35,7 @@ Del	Del
 delete	delete
 Esc	Esc
 eject	eject
-# 月份（据说好像 5、6、7 月不要缩写 https://www.zhihu.com/question/29896678）
+# months short forms of may june july are discouraged
 January	January
 Jan.	Jan.
 January	Jan
@@ -73,7 +73,7 @@ November	Nov
 December	December
 Dec.	Dec.
 December	Dec
-# 星期
+# weekdays
 Monday	Monday
 Mon.	Mon.
 Monday	Mon
@@ -98,7 +98,7 @@ Saturday	Sat
 Sunday	Sunday
 Sun.	Sun.
 Sunday	Sun
-# 生活大爆炸 & 老友记
+# big bang theory and friends
 Sheldon	Sheldon
 Leonard	Leonard
 Howard	Howard
@@ -112,7 +112,7 @@ Joey	Joey
 Ross	Ross
 Chandler	Chandler
 Phoebe	Phoebe
-# 特定的排序，为了每组的排序，code 必须保持一致
+# fixed ordering code must stay identical within each group
 hell	hell	2
 he'll	hell	1
 shell	shell	2
@@ -128,7 +128,7 @@ she'd	shed	1
 net	net	2
 .NET	net	1
 .NET	dotnet
-# 带权重的系列
+# weighted series
 iPhone	iPhone	999
 iPhone 17	iPhone	4
 iPhone 17 Pro	iPhone	3

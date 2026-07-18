@@ -1,1 +1,1 @@
--- 20240314 使用新的引入语法，rime.lua 内部文件去除
+-- 20240314 new include syntax internal files removed

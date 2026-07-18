@@ -3,7 +3,7 @@
 	农历功能复制自 https://github.com/boomker/rime-fast-xhup
 --]]
 
--- 数字
+-- digits
 
 local numerical_units = {
 	"",
@@ -45,7 +45,7 @@ local function convert_arab_to_chinese(number)
 	if n_number < 10 then
 		return numerical_names[n_number + 1]
 	end
-	-- 一十九 => 十九
+	-- yi shi jiu becomes shi jiu
 	if n_number < 20 then
 		local digit = string.sub(n_number, 2, 2)
 		if digit == "0" then
@@ -71,7 +71,7 @@ local function convert_arab_to_chinese(number)
 		"传入参数位数" .. len_number .. "必须在(0, " .. len_max .. "]之间！"
 	)
 
-	-- 01，数字转成表结构存储
+	-- 01 store digits as table
 	local numerical_tbl = {}
 	for i = 1, len_number do
 		numerical_tbl[i] = tonumber(string.sub(n_number, i, i))
@@ -96,35 +96,35 @@ local function convert_arab_to_chinese(number)
 	return result
 end
 
---天干名称
+--heavenly stem names
 local tianGan = { "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸" }
 
---地支名称
+--earthly branch names
 local diZhi = { "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥" }
 
---属相名称
+--zodiac names
 local shengXiao = { "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪" }
 
---农历日期名
+--lunar day names
 local lunarDayShuXu = { "初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十",
 	"十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十",
 	"廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十" }
 
---农历月份名
+--lunar month names
 local lunarMonthShuXu = { "正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "冬", "腊" }
 
 local daysToMonth365 = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 }
 local daysToMonth366 = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 }
 
---每个农历月所属的季节名称和季节符号表
+--season name and symbol for each lunar month
 local jiJieNames = { '春', '春', '春', '夏', '夏', '夏', '秋', '秋', '秋', '冬', '冬', '冬' }
 local jiJieLogos = { '🌱', '🌱', '🌱', '🌾', '🌾', '🌾', '🍂', '🍂', '🍂', '❄', '❄', '❄' }
 
---[[dateLunarInfo说明：
-自1901年起，至2100年每年的农历信息，与万年历核对完成
-每年第1个数字为闰月月份
-每年第2、3个数字为当年春节所在的阳历月份和日期
-每年第4个数字为当年中对应月分的大小进，左边起为1月，往后依次为2月，3月，4月，。。。]]
+--[[dateLunarInfo notes
+lunar info for each year from 1901 to 2100 verified against calendar
+first number is the leap month
+second and third are gregorian month and day of spring festival
+fourth encodes big and small months from month 1 leftward]]
 local BEGIN_YEAR = 1901
 local NUMBER_YEAR = 199
 local dateLunarInfo = { { 0, 2, 19, 19168 }, { 0, 2, 8, 42352 }, { 5, 1, 29, 21096 }, { 0, 2, 16, 53856 }, { 0, 2, 4, 55632 }, { 4, 1, 25, 27304 },
@@ -162,7 +162,7 @@ local dateLunarInfo = { { 0, 2, 19, 19168 }, { 0, 2, 8, 42352 }, { 5, 1, 29, 210
 	{ 6, 1, 27, 27472 }, { 0, 2, 15, 22224 }, { 0, 2, 5, 19168 }, { 4, 1, 25, 42216 }, { 0, 2, 12, 42192 }, { 0, 2, 1, 53584 },
 	{ 2, 1, 21, 55592 }, { 0, 2, 9, 54560 } }
 
---将给定的十进制数转为二进制字符串
+--convert decimal to binary string
 local function dec2Bin(num)
 	local str = ""
 	local tmp = num
@@ -179,7 +179,7 @@ local function dec2Bin(num)
 	return str
 end
 
---将给定的两个十进制数转换为两个长度相等的二进制字符串
+--convert two decimals to equal length binary strings
 local function dec2BinWithSameLen(num1, num2)
 	local str1 = dec2Bin(num1)
 	local str2 = dec2Bin(num2)
@@ -188,7 +188,7 @@ local function dec2BinWithSameLen(num1, num2)
 	local len = 0
 	local x = 0
 
-	--长度较短的字符串前方补零
+	--pad the shorter string with zeros
 	if (len1 > len2) then
 		x = len1 - len2
 		for i = 1, x do
@@ -206,7 +206,7 @@ local function dec2BinWithSameLen(num1, num2)
 	return str1, str2, len
 end
 
---将给定的两个十进制数，进行按位与运算，返回算结果
+--bitwise and of two decimals
 local function bitAnd(num1, num2)
 	local str1, str2, len = dec2BinWithSameLen(num1, num2)
 	local rtmp = ""
@@ -226,7 +226,7 @@ local function bitAnd(num1, num2)
 	return tonumber(rtmp, 2)
 end
 
---判断所在年份是否为闰年
+--check leap year
 local function IsLeapYear(solarYear)
 	if solarYear % 4 ~= 0 then
 		return 0
@@ -247,7 +247,7 @@ local function getYearInfo(lunarYear, index)
 	return dateLunarInfo[lunarYear - 1901 + 1][index]
 end
 
---计算指定公历日期是这一年中的第几天
+--day of year for a gregorian date
 local function daysCntInSolar(solarYear, solarMonth, solarDay)
 	local daysToMonth = daysToMonth365
 	if solarYear % 4 == 0 then
@@ -277,30 +277,30 @@ local function numToCNumber(number)
 	return cnLunarDate
 end
 
---[[根据指定的阳历日期，返回一个农历日期的结构体，结构如下：
-lunarDate.solarYear：对应的阳历日期年份
-lunarDate.solarMonth：对应的阳历日期月份
-lunarDate.solarDay：对应的阳历日期日期
-lunarDate.solarDate_YYYYMMDD：对应的阳历日期 YYYYMMDD
-lunarDate.year：对应农历年份
-lunarDate.month：对应农历月份
-lunarDate.day：对应农历的日期
-lunarDate.leap：是否为农历的闰年
-lunarDate.year_shengXiao：用生肖表示的农历年份
-lunarDate.year_ganZhi：用干支表示的农历年份
-lunarDate.month_shuXu：农历月份的名称
-lunarDate.month_ganZhi：用干支表示的农历月份
-lunarDate.day_shuXu：农历日期的名称
-lunarDate.day_ganZhi：用干支表示的农历日期
-lunarDate.lunarDate_YYYYMMDD：以 YYYYMMDD 格式表示的农历日期
-lunarDate.lunarDate_1：癸卯年四月十一
-lunarDate.lunarDate_2：兔年四月十一
-lunarDate.lunarDate_3：癸卯年四月丁亥日
-lunarDate.lunarDate_4：癸卯(兔)年四月十一
-lunarDate.jiJieName: 日期所属的季节名称
-lunarDate.jiJieLogo：日期所属的季节的符号
+--[[return a lunar date struct for a gregorian date fields below
+lunarDate.solarYear gregorian year
+lunarDate.solarMonth gregorian month
+lunarDate.solarDay gregorian day
+lunarDate.solarDate_YYYYMMDD gregorian date YYYYMMDD
+lunarDate.year lunar year
+lunarDate.month lunar month
+lunarDate.day lunar day
+lunarDate.leap whether lunar leap year
+lunarDate.year_shengXiao lunar year as zodiac
+lunarDate.year_ganZhi lunar year as ganzhi
+lunarDate.month_shuXu lunar month name
+lunarDate.month_ganZhi lunar month as ganzhi
+lunarDate.day_shuXu lunar day name
+lunarDate.day_ganZhi lunar day as ganzhi
+lunarDate.lunarDate_YYYYMMDD lunar date as YYYYMMDD
+lunarDate.lunarDate_1 sample 癸卯年四月十一
+lunarDate.lunarDate_2 sample 兔年四月十一
+lunarDate.lunarDate_3 sample 癸卯年四月丁亥日
+lunarDate.lunarDate_4 sample 癸卯(兔)年四月十一
+lunarDate.jiJieName season name of the date
+lunarDate.jiJieLogo season symbol of the date
 ]]
---阳历转阴历
+--gregorian to lunar
 local function solar2Lunar(solarYear, solarMonth, solarDay)
 	local lunarDate = {}
 	lunarDate.solarYear = solarYear
@@ -326,7 +326,7 @@ local function solar2Lunar(solarYear, solarMonth, solarDay)
 	lunarDate.jiJieName = ''
 	lunarDate.jiJieLogo = ''
 
-	--确定当前日期相对于2000年1月7日的天数，此日期是一个甲子记日的起点
+	--days since 2000-01-07 a jiazi day counting origin
 	local tBase = os.time({ year = 2000, month = 1, day = 7 })
 	local tThisDay = os.time({ year = math.min(solarYear, 2037), month = solarMonth, day = solarDay })
 	lunarDate.daysToBase = math.floor((tThisDay - tBase) / 86400)
@@ -337,79 +337,79 @@ local function solar2Lunar(solarYear, solarMonth, solarDay)
 		return lunarDate
 	end
 
-	--春节的公历日期
+	--gregorian date of spring festival
 	local solarMontSpring = getYearInfo(lunarDate.year, 2)
 	local solarDaySpring = getYearInfo(lunarDate.year, 3)
 
-	--计算这天是公历年的第几天
+	--day of gregorian year for this date
 	local daysCntInSolarThisDate = daysCntInSolar(solarYear, solarMonth, solarDay)
-	--计算春节是公历年的第几天
+	--day of gregorian year for spring festival
 	local daysCntInSolarSprint = daysCntInSolar(solarYear, solarMontSpring, solarDaySpring)
-	--计算这天是农历年的第几天
+	--day of lunar year for this date
 	local daysCntInLunarThisDate = daysCntInSolarThisDate - daysCntInSolarSprint + 1
 
 	if daysCntInLunarThisDate <= 0 then
-		--如果 daysCntInLunarThisDate 为负，说明指定的日期在农历中位于上一年的年度内
+		--negative daysCntInLunarThisDate means the date belongs to the previous lunar year
 		lunarDate.year = lunarDate.year - 1
 		if lunarDate.year <= BEGIN_YEAR then
 			return lunarDate
 		end
 
-		--重新确定农历春节所在的公历日期
+		--redetermine the gregorian date of that spring festival
 		solarMontSpring = getYearInfo(lunarDate.year, 2)
 		solarDaySpring = getYearInfo(lunarDate.year, 3)
 
-		--重新计算上一年春节是第几天
+		--day number of last years spring festival
 		daysCntInSolarSprint = daysCntInSolar(solarYear - 1, solarMontSpring, solarDaySpring)
-		--计算上一年共几天
+		--total days of last year
 		local daysCntInSolarTotal = daysCntInSolar(solarYear - 1, 12, 31)
-		--上一年农历年的第几天
+		--day of last lunar year
 		daysCntInLunarThisDate = daysCntInSolarThisDate + daysCntInSolarTotal - daysCntInSolarSprint + 1
 	end
 
-	--开始计算月份
+	--start computing month
 	local lunarMonth = 1
 	local lunarDaysCntInMonth = 0
-	--dec 32768 =bin 1000000000000000，一个掩码
+	--dec 32768 bin 1000000000000000 a mask
 	local bitMask = 32768
-	--大小月份的flg数据
+	--big small month flag data
 	local lunarMonth30Flg = getYearInfo(lunarDate.year, 4)
-	--从正月开始，每个月进行以下计算
+	--from first month do the following per month
 	while lunarMonth <= 13 do
-		--计算这个月总共有多少天
+		--days in this month
 		if bitAnd(lunarMonth30Flg, bitMask) ~= 0 then
 			lunarDaysCntInMonth = 30
 		else
 			lunarDaysCntInMonth = 29
 		end
 
-		--检查thisDate距离这个月初一的天数是否小于这个月的总天数
+		--check days from month start below month length
 		if daysCntInLunarThisDate <= lunarDaysCntInMonth then
 			lunarDate.month = lunarMonth
 			lunarDate.day = daysCntInLunarThisDate
 			break
 		else
-			--如果剩余天数还大于这个月的天数，则继续往下个月算
+			--if remaining days exceed this month continue to next
 			daysCntInLunarThisDate = daysCntInLunarThisDate - lunarDaysCntInMonth
 			lunarMonth = lunarMonth + 1
-			--掩码除2，相当于bit位向右移动一位
+			--halve mask shift right one bit
 			bitMask = bitMask / 2
 		end
 	end
 
-	--闰月所在的月份
+	--month containing the leap month
 	local leapMontInLunar = getYearInfo(lunarDate.year, 1)
-	--确定闰月信息
+	--determine leap month info
 	if leapMontInLunar > 0 and leapMontInLunar < lunarDate.month then
-		--如果存在闰月，且闰在前面判断的月份前面，则农历月份需要减 1 处理
+		--if leap month exists before current month subtract 1
 		lunarDate.month = lunarDate.month - 1
 
 		if leapMontInLunar == lunarDate.month then
-			--如果恰好闰在这个月，则把闰月标记位置
+			--if leap is exactly this month mark it
 			lunarDate.leap = true
 		end
 	end
-	--合成农历的年月日格式：20240215
+	--compose lunar date format 20240215
 	local tmpMonthStr = '0' .. lunarDate.month
 	tmpMonthStr = string.sub(tmpMonthStr, (#tmpMonthStr < 3 and 1 or 2), (#tmpMonthStr < 3 and 2 or 3))
 	local tmpDayStr = '0' .. lunarDate.day
@@ -420,40 +420,40 @@ local function solar2Lunar(solarYear, solarMonth, solarDay)
 	lunarDate.jiJieName = jiJieNames[lunarDate.month]
 	lunarDate.jiJieLogo = jiJieLogos[lunarDate.month]
 
-	--确定年份的生肖
+	--zodiac of the year
 	lunarDate.year_shengXiao = shengXiao[(((lunarDate.year - 4) % 60) % 12) + 1]
-	--确定年份的干支
+	--ganzhi of the year
 	lunarDate.year_ganZhi = tianGan[(((lunarDate.year - 4) % 60) % 10) + 1] ..
 		diZhi[(((lunarDate.year - 4) % 60) % 12) + 1]
-	--确定月份的数序
+	--ordinal of the month
 	lunarDate.month_shuXu = (lunarDate.leap and '闰' or '') .. lunarMonthShuXu[lunarDate.month]
-	--确定月份的干支，暂不支持计算
+	--ganzhi of the month not supported yet
 	lunarDate.month_ganZhi = ''
-	--确定日期的数序
+	--ordinal of the day
 	lunarDate.day_shuXu = lunarDayShuXu[lunarDate.day]
-	--确定日期的干支
+	--ganzhi of the day
 	lunarDate.day_ganZhi = tianGan[(((lunarDate.daysToBase) % 60) % 10) + 1] ..
 		diZhi[(((lunarDate.daysToBase) % 60) % 12) + 1]
 
-	--提供国标第一类计年表示格式
+	--national standard year format one
 	lunarDate.lunarDate_1 = lunarDate.year_ganZhi .. '年' .. lunarDate.month_shuXu .. '月' .. lunarDate.day_shuXu
-	--提供国标第二类计年表示格式
+	--national standard year format two
 	lunarDate.lunarDate_2 = lunarDate.year_shengXiao .. '年' .. lunarDate.month_shuXu .. '月' .. lunarDate.day_shuXu
-	--提供国标第三类计年表示格式
+	--national standard year format three
 	lunarDate.lunarDate_3 = lunarDate.year_ganZhi .. '年' .. lunarDate.month_shuXu .. '月' .. lunarDate.day_ganZhi .. '日'
-	--提供非国标的第四类计年表示格式
+	--non standard year format four
 	lunarDate.lunarDate_4 = lunarDate.year_ganZhi ..
 		'(' .. lunarDate.year_shengXiao .. ')年' .. lunarDate.month_shuXu .. '月' .. lunarDate.day_shuXu
 
 	return lunarDate
 end
 
---通过传入的阳历时间，返回一个阴历数据结构
+--return lunar struct from gregorian time
 local function solar2LunarByTime(t)
 	local year = tonumber(string.sub(t, 1, 4))
 	local month = tonumber(string.sub(t, 5, 6))
 	local day = tonumber(string.sub(t, 7, 8))
-	-- 确保年月日都是有效的整数值
+	-- ensure year month day are valid integers
 	local timeObj = os.time({
 		year = math.floor(year or 0),
 		month = math.floor(month or 1),
@@ -463,7 +463,7 @@ local function solar2LunarByTime(t)
 	return solar2Lunar(solarDate.year, solarDate.month, solarDate.day)
 end
 
--- 农历
+-- lunar
 local function translator(input, seg, env)
 	env.lunar_key_word = env.lunar_key_word or
 		(env.engine.schema.config:get_string(env.name_space:gsub('^*', '')) or 'nl')

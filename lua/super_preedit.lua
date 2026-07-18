@@ -1,19 +1,19 @@
--- 复制自<万象拼音方案> https://github.com/amzxyz/rime_wanxiang
+-- copied from rime wanxiang by amzxyz
 -- @author: amzxyz
 -- @modify: Mintimate
--- 修改内容: ① 兼容纠错
+-- changes 1 corrector compatibility
 
 local function modify_preedit_filter(input, env)
     local config = env.engine.schema.config
     local delimiter = config:get_string('speller/delimiter') or " '"
 
-    -- 新增：获取 schema_id
+    -- new get schema_id
     local schema_id = env.engine.schema.schema_id or ""
     local is_wanxiang_pro = (schema_id == "wanxiang_pro")
 
-    -- 从 YAML 配置读取参数
-    local tone_isolate = config:get_bool("speller/tone_isolate")      -- 是否将数字声调从转换后拼音中隔离出来
-    local visual_delim = config:get_string("speller/visual_delimiter") or " "  -- 定义转换后的分隔符号
+    -- read parameters from yaml config
+    local tone_isolate = config:get_bool("speller/tone_isolate")      -- isolate digit tones from converted pinyin
+    local visual_delim = config:get_string("speller/visual_delimiter") or " "  -- delimiter for converted output
 
     env.settings = { tone_display = env.engine.context:get_option("tone_display") } or false
     local auto_delimiter = delimiter:sub(1, 1)
@@ -33,7 +33,7 @@ local function modify_preedit_filter(input, env)
         local comment = genuine_cand.comment
 
         if env.is_special_tag_mode then
-            -- 2025-07-10 Mintimate 使其兼容纠错
+            -- 2025-07-10 Mintimate corrector compatibility
             genuine_cand.preedit = comment:gsub("[%[%]]", "")
             yield(genuine_cand)
             goto continue
@@ -44,7 +44,7 @@ local function modify_preedit_filter(input, env)
             goto continue
         end
 
-        -- 拆分 preedit
+        -- split preedit
         local input_parts = {}
         local current_segment = ""
         for i = 1, #preedit do
@@ -63,7 +63,7 @@ local function modify_preedit_filter(input, env)
             table.insert(input_parts, current_segment)
         end
 
-        -- 拆分拼音段（comment）
+        -- split pinyin segments comment
         local pinyin_segments = {}
         for segment in string.gmatch(comment, "[^" .. auto_delimiter .. manual_delimiter .. "]+") do
             local pinyin = segment:match("^[^;]+")
@@ -71,7 +71,7 @@ local function modify_preedit_filter(input, env)
                 table.insert(pinyin_segments, pinyin)
             end
         end
-        -- 替换逻辑
+        -- replace logic
         local pinyin_index = 1
         for i, part in ipairs(input_parts) do
             if part == auto_delimiter or part == manual_delimiter then

@@ -23,7 +23,7 @@ engine:
     - key_binder
     - speller
     - recognizer
-    #關閉標點符號轉換（對應symbols.yaml）    - punctuator
+    # disable punctuation conversion matching symbols.yaml    - punctuator
     - selector
     - navigator
     - express_editor
@@ -43,22 +43,22 @@ speller:
   alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
   delimiter: " '"
   algebra:
-    __include: algebra_rime_ice         # 全拼
+    __include: algebra_rime_ice         # full pinyin
     
 translator:
   dictionary: melt_eng
   spelling_hints: 9
   
-# 通用的派生规则
+# common derivation rules
 algebra_common:
-  # 数字派生
+  # digit derivation
   - derive/1([4-7|9])/$1teen/
   - derive/11/eleven/
   - derive/12/twelve/
   - derive/13/thirteen/
   - derive/15/fifteen/
   - derive/18/eighteen/
-  - derive/0/o/ # 如 1000 -> oneOOO
+  - derive/0/o/ # like 1000 to oneOOO
   - derive/0/O/
   - derive/0/zero/
   - derive/1/one/
@@ -73,7 +73,7 @@ algebra_common:
   - derive/7/seven/
   - derive/8/eight/
   - derive/9/nine/
-  # 符号派生
+  # symbol derivation
   - derive/\+/plus/
   - derive/\./dot/
   - derive/@/at/
@@ -85,23 +85,23 @@ algebra_common:
   - derive / slash
   - derive/&/and/
   - derive/%/percent/
-  # 派生无单个特殊字符的拼写
+  # derive spelling without single special characters
   - derive/[.]//
   - derive/[+]//
   - derive/[@]//
   - derive/[-]//
   - derive/[_]//
-  # 派生无任何非字母数字字符的拼写
+  # derive spelling without any non alphanumeric characters
   - derive/[^a-zA-Z0-9]//
-  # 禁用非英文、数字开头的编码
+  # forbid codes not starting with letters or digits
   - erase/^[^a-zA-Z0-9].+$/
-  # 全小写
+  # all lowercase
   - derive/^.+$/\L$0/
-  # 全大写
+  # all uppercase
   - derive/^.+$/\U$0/
-  # 首字母大写
+  # capitalize first letter
   - derive/^./\U$0/
-  # 前 2~10 个字母大写
+  # uppercase first 2 to 10 letters
   - derive/^([a-z]{2})/\U$1/
   - derive/^([a-z]{3})/\U$1/
   - derive/^([a-z]{4})/\U$1/
@@ -112,7 +112,7 @@ algebra_common:
   - derive/^([a-z]{9})/\U$1/
   - derive/^([a-z]{10})/\U$1/
 
-# 全拼
+# full pinyin
 algebra_rime_ice:
   __include: algebra_common
   __append:

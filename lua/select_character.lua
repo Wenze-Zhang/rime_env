@@ -1,5 +1,5 @@
--- 依次定字
--- 来源：
+-- select character from word
+-- source
 -- https://github.com/BlindingDark/rime-lua-select-character/blob/master/lua/select_character.lua
 -- http://lua-users.org/lists/lua-l/2014-04/msg00590.html
 local function utf8_sub(s, i, j)
@@ -54,9 +54,9 @@ local function select_character(key, env)
    local context = engine.context
    local config = engine.schema.config
 
-   -- 选择开头字
+   -- pick first char
    local first_key = config:get_string('key_binder/select_first_character') or 'bracketleft'
-   -- 选择末尾字
+   -- pick last char
    local last_key = config:get_string('key_binder/select_last_character') or 'bracketright'
 
    local commit_text = context:get_commit_text()

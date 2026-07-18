@@ -1,44 +1,44 @@
--- 双拼辅码过滤器：使用触发键进行形码筛选
--- 参考: https://github.com/HowcanoeWang/rime-lua-aux-code
--- Mintimate修改:
---   1. 支持设置在输入触发键后，才显示形码注释
---   2. 为了适应本项目，修改配置选项入口为axu_code
+-- double pinyin aux code filter shape filtering via trigger key
+-- based on rime-lua-aux-code by HowcanoeWang
+-- Mintimate changes
+--   1 show shape comment only after trigger key
+--   2 config entry renamed to aux_code for this project
 
 local AuxFilter = {}
 
--- 日志模块
+-- log module
 -- local log = require 'log'
 -- log.outfile = "aux_code.log"
 
 function AuxFilter.init(env)
     -- log.info("** AuxCode filter", env.name_space)
 
-    -- 每个方案可指定不同的辅码表；不能使用模块级的单一当前表。
+    -- each schema may use its own aux table no single module level table
     env.aux_code = AuxFilter.readAuxTxt(env.name_space)
-    -- 只为实际出现在候选中的汉字建立索引，避免一次性展开整份大码表。
+    -- index only chars present in candidates avoid expanding the whole table
     env.aux_index = {}
 
     local engine = env.engine
     local config = engine.schema.config
 
-    -- 設定預設觸發鍵為分號，並從配置中讀取自訂的觸發鍵
+    -- default trigger is semicolon read custom trigger from config
     env.trigger_key = config:get_string("aux_code/trigger_word") or ";"
     if env.trigger_key == "" then
         env.trigger_key = ";"
     end
-    -- 对内容进行替换
-    -- 使用 Upstream 的 inline escaping 逻辑，但在 init 中预处理好供 notifier 使用
+    -- content replacement
+    -- use upstream inline escaping preprocessed in init for notifier
     env.trigger_key_pattern = env.trigger_key:gsub("(%W)", "%%%1")
 
-    -- 设定是否显示辅助码，默认为显示
+    -- whether to show aux code default show
     env.show_aux_notice = config:get_string("aux_code/show_aux_notice") or "always"
 
     ----------------------------
-    -- 持續選詞上屏，保持輔助碼分隔符存在 --
+    -- keep selecting to commit keep aux delimiter present --
     ----------------------------
     env.notifier = engine.context.select_notifier:connect(function(ctx)
-        -- 仅在实际输入分隔符后处理选词。show_aux_notice 只控制展示，
-        -- 不应让不含分隔符的输入进入下方的重编辑逻辑。
+        -- handle selection only after delimiter is typed show_aux_notice
+        -- only controls display must not reroute plain input below
         if not ctx.input:find(env.trigger_key, 1, true) then
             return
         end
@@ -47,37 +47,37 @@ function AuxFilter.init(env)
         local removeAuxInput = ctx.input:match("([^,]+)" .. env.trigger_key_pattern)
         local reeditTextFront = preedit.text:match("([^,]+)" .. env.trigger_key_pattern)
 
-        -- ctx.text 隨著選字的進行，oaoaoa； 有如下的輸出：
-        -- ---- 有輔助碼 ----
+        -- ctx.text changes while selecting oaoaoa samples below
+        -- ---- with aux code ----
         -- >>> 啊 oaoa；au
         -- >>> 啊吖 oa；au
         -- >>> 啊吖啊；au
-        -- ---- 無輔助碼 ----
+        -- ---- without aux code ----
         -- >>> 啊 oaoa；
         -- >>> 啊吖 oa；
         -- >>> 啊吖啊；
-        -- 這邊把已經上屏的字段 (preedit:text) 進行分割；
+        -- split the committed part preedit text
         -- 如果已經全部選完了，分割後的結果就是 nil，否則都是 吖卡 a 這種字符串
-        -- 驗證方式：
+        -- verification
         -- log.info('select_notifier', ctx.input, removeAuxInput, preedit.text, reeditTextFront)
 
-        -- 當最終不含有任何字母時 (候選)，就跳出分割模式，並把輔助碼分隔符刪掉
+        -- when no letters remain leave split mode and drop the aux delimiter
         if not removeAuxInput then
             return
         end
         ctx.input = removeAuxInput
         if reeditTextFront and reeditTextFront:match("[a-z]") then
-            -- 給詞尾自動添加分隔符，上面的 re.match 會把分隔符刪掉
+            -- append delimiter to word end re.match above removed it
             ctx.input = ctx.input .. env.trigger_key
         else
-            -- 剩下的直接上屏
+            -- commit the rest directly
             ctx:commit()
         end
     end)
 end
 
 ----------------
--- 阅读辅码文件 --
+-- read aux code file --
 ----------------
 function AuxFilter.readAuxTxt(txtpath)
     --log.info("** AuxCode filter", 'read Aux code txt:', txtpath)
@@ -92,14 +92,14 @@ function AuxFilter.readAuxTxt(txtpath)
 
     local file = io.open(fileAbsolutePath, "r") or io.open(userPath .. defaultFile, "r")
     if not file then
-        -- 缺少可选辅码文件时保持输入法可用；下次部署/重载后会重试读取。
+        -- stay usable when the optional aux file is missing retry on next deploy
         return {}
     end
 
     local auxCodes = {}
     for line in file:lines() do
-        local clean_line = line:match("[^\r\n]+") -- 去掉換行符，不然 value 是帶著 \n 的
-        local key, value = clean_line:match("([^=]+)=(.+)") -- 分割 = 左右的變數
+        local clean_line = line:match("[^\r\n]+") -- strip line breaks otherwise value keeps trailing newline
+        local key, value = clean_line:match("([^=]+)=(.+)") -- split variables around the equals sign
         if key and value then
             if auxCodes[key] then
                 auxCodes[key] = auxCodes[key] .. " " .. value
@@ -109,7 +109,7 @@ function AuxFilter.readAuxTxt(txtpath)
         end
     end
     file:close()
-    -- 確認 code 能打印出來
+    -- ensure code prints
     -- for key, value in pairs(AuxFilter.aux_code) do
     --     log.info(key, table.concat(value, ','))
     -- end
@@ -118,7 +118,7 @@ function AuxFilter.readAuxTxt(txtpath)
     return auxCodes
 end
 
--- 按字符懒加载辅码索引。false 表示该字不在码表中，避免反复查找。
+-- lazy per char aux index false means char not in table avoids rechecking
 local function get_char_aux_index(env, char)
     local cached = env.aux_index[char]
     if cached ~= nil then
@@ -144,8 +144,8 @@ local function get_char_aux_index(env, char)
     return entry
 end
 
--- 词组中任意一字命中即返回。两位辅码必须来自同一汉字的同一完整编码，
--- 避免将不同字或不同编码的第一、二码交叉成误匹配。
+-- any char hit in a phrase returns both aux digits must come from the same
+-- full code of one char avoid cross matching different chars or codes
 local function word_matches_aux(env, word, aux_str)
     if not word or word == "" or aux_str == "" then
         return false
@@ -163,14 +163,14 @@ local function word_matches_aux(env, word, aux_str)
 end
 
 ------------------
--- filter 主函數 --
+-- filter main function --
 ------------------
 function AuxFilter.func(input, env)
     local context = env.engine.context
     local inputCode = context.input
     local has_trigger = inputCode:find(env.trigger_key, 1, true) ~= nil
 
-    -- 没有输入辅助码引导符时直接透传，不进入候选匹配热路径。
+    -- no aux trigger typed pass through skip hot path
     if not has_trigger and env.show_aux_notice ~= "always" then
         for cand in input:iter() do
             yield(cand)
@@ -189,12 +189,12 @@ function AuxFilter.func(input, env)
     local showComment = env.show_aux_notice == "always" or env.show_aux_notice == true or
         (env.show_aux_notice == "trigger" and has_trigger)
 
-    -- 遍歷每一個待選項
+    -- iterate candidates
     for cand in input:iter() do
         local current_cand = cand
-        local auxCodes = env.aux_code[current_cand.text] -- 仅单字非 nil
+        local auxCodes = env.aux_code[current_cand.text] -- non nil only for single chars
 
-        -- 给候选项添加辅助码提示
+        -- add aux code hint to candidate
         if showComment and auxCodes and #auxCodes > 0 then
             local codeComment = auxCodes:gsub(' ', ',')
             if current_cand:get_dynamic_type() == "Shadow" then
@@ -212,7 +212,7 @@ function AuxFilter.func(input, env)
             end
         end
 
-        -- 未输入辅码时直接透传；输入辅码后只输出逐字精确命中的候选。
+        -- pass through without aux input with aux only exact per char hits
         if #auxStr == 0 then
             yield(current_cand)
         elseif (current_cand.type == 'user_phrase' or current_cand.type == 'phrase' or

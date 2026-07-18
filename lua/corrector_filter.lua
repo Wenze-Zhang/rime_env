@@ -20,7 +20,7 @@ function M.init(env)
     end
     M.style = '{comment}'
     M.corrections = {
-        -- 错音
+        -- wrong sound
         ["hun dun"] = { text = "馄饨", comment = "hún tun" },
         ["zhu jiao"] = { text = "主角", comment = "zhǔ jué" },
         ["jiao se"] = { text = "角色", comment = "júe sè" },
@@ -97,7 +97,7 @@ function M.init(env)
         ["yin jiu zhi ke"] = { text = "饮鸩止渴", comment = "饮鸩(zhèn)止渴" },
         ["yin jiu jie ke"] = { text = "饮鸩解渴", comment = "饮鸩(zhèn)解渴" },
         ["gong shang jiao zhi yu"] = { text = "宫商角徵羽", comment = "宫商角(jué)徵羽" },
-        -- 错字
+        -- wrong char
         ["pu jie"] = { text = "扑街", comment = "仆街" },
         ["pu gai"] = { text = "扑街", comment = "仆街" },
         ["pu jie zai"] = { text = "扑街仔", comment = "仆街仔" },
@@ -121,7 +121,7 @@ function M.init(env)
 end
 
 local function update_comment(cand, env)
-    -- 只处理拼音候选。其他 translator 的 comment 属于其展示数据，原样透传。
+    -- only handle pinyin candidates other translator comments pass through
     if cand.type == "unicode" then
         return
     end

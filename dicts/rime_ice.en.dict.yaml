@@ -3,15 +3,15 @@
 #
 #
 # https://github.com/iDvel/rime-ice
-# ------- 英文主词库 -------
+# english main dict
 #
 #
-# 来源：
-# 常见两万词 [20k.txt](https://github.com/first20hours/google-10000-english/)
-# 合并不重复的 1000 多左右 [融合拼音方案](https://github.com/tumuyan/rime-melt) 的英文词库
+# sources
+# 20k common words from google-10000-english
+# about 1000 extra merged from rime melt english dict
 #
-# 注释掉单个字母、绝大部分两个字母的缩写、冷门缩写
-# 转化应当大写的单词
+# single letters and most rare abbreviations commented out
+# words converted to uppercase where appropriate
 ---
 name: rime_ice.en
 version: "2026-07-01"

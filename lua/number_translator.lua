@@ -1,5 +1,5 @@
-﻿-- 来源 https://github.com/yanhuacuo/98wubi-tables > http://98wb.ysepan.com/
--- 数字、金额大写 (任意大写字母引导+数字)
+﻿-- source yanhuacuo 98wubi-tables
+-- numbers and money uppercase led by any capital letter plus digits
 
 local function splitNumPart(str)
 	local part = {}
@@ -36,7 +36,7 @@ local function decimal_func(str, posMap, valMap)
 	return result:gsub(valMap[0]..valMap[0] ,valMap[0])
 end
 
--- 把数字串按千分位四位数分割，进行转换为中文
+-- split digits into four digit groups and convert to chinese
 local function formatNum(num,t)
 	local digitUnit,wordFigure
 	local result=""
@@ -57,8 +57,8 @@ local function formatNum(num,t)
 	return result
 end
 
--- 数值转换为中文
-function number2cnChar(num,flag,digitUnit,wordFigure)    --flag=0中文小写反之为大写
+-- convert value to chinese
+function number2cnChar(num,flag,digitUnit,wordFigure)    --flag 0 lowercase chinese otherwise uppercase
 	local st,result
 	num=tostring(num) result=""
 	local num1,num2=math.modf(num)
@@ -109,9 +109,9 @@ local function number_translatorFunc(num)
 	return result
 end
 
--- 触发模式为任意大写字母（除了 U，U 用在 Unicode 了）开头，可在 recognizer/patterns 中自定义
+-- trigger is any capital except U which unicode uses customizable in recognizer patterns
 local function number_translator(input, seg, env)
-	-- 获取 recognizer/patterns/number 的第 2 个字符作为触发前缀
+	-- second char of recognizer patterns number is the trigger prefix
 	env.number_keyword = env.number_keyword or env.engine.schema.config:get_string('recognizer/patterns/rmb'):sub(2, 2)
     local str, num, numberPart
     if env.number_keyword ~= '' and input:sub(1, 1) == env.number_keyword then

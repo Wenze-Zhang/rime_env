@@ -1,7 +1,7 @@
 # Rime dictionary
 # encoding: utf-8
 #https://github.com/amzxyz/RIME-LMDG
-#兼容词库，对于多字词汇两种读音的场景，手动维护到本表以及一些其他的杂项
+# compatible dict for words with two readings and misc entries
 ---
 name: rime_mint.compatible
 version: "LTS"

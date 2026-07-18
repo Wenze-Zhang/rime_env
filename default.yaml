@@ -1,64 +1,64 @@
 # Rime default settings
 # encoding: utf-8
 
-# 注意⚠️: 因为薄荷想要兼容 https://github.com/yanhuacuo/rimetool ，所以方案内有 default.yaml 配置的冗余
-# 如果修改 page_size、key_binder 等内容，请不要使用 default.custom.yaml ，直接修改方案配置
-# 参考: https://www.mintimate.cc/zh/guide/configurationOverride.html
+# note mint keeps a redundant default.yaml to stay compatible with rimetool
+# prefer editing schema files over default.custom.yaml for page_size and key_binder
+# see mintimate docs on configuration override
 
 # Fork From: https://github.com/rime/librime/blob/3bc65c990546aa2062ecd1eb593d54d2949644cd/data/minimal/default.yaml
 config_version: "24.03.24"
 
-# 以下内容，实际会由default.custom.yaml和方案配置所覆写
-## 九宫格依赖于 rime_mint ，如果需要使用其他方案（比如: 小鹤双拼的 九宫格），可以使用 custom 文件覆写
+# values below are overridden by default.custom.yaml and schema configs
+## t9 depends on rime_mint use a custom file to override for other schemas
 schema_list:
-  - schema: rime_mint            # 薄荷拼音
-  - schema: double_pinyin_flypy  # 小鹤双拼
-  - schema: rime_mint_flypy      # 薄荷拼音-小鹤混输方案
-  - schema: terra_pinyin         # 地球拼音-薄荷定制
-  - schema: wubi98_mint          # 五笔98-五笔小筑
-  - schema: wubi86_jidian        # 五笔86-极点86
-  - schema: t9                   # 仓九宫格-全拼输入
-  # 以下方案薄荷进行了适配，但是没有激活
-  # - schema: double_pinyin_abc    # 智能ABC双拼
-  # - schema: double_pinyin_mspy   # 微软双拼
-  # - schema: double_pinyin_sogou  # 搜狗双拼
-  # - schema: double_pinyin_ziguang # 紫光双拼
-  # - schema: double_pinyin         # 自然码双拼
+  - schema: rime_mint            # mint full pinyin
+  - schema: double_pinyin_flypy  # flypy double pinyin
+  - schema: rime_mint_flypy      # mint full pinyin flypy hybrid
+  - schema: terra_pinyin         # terra pinyin mint custom
+  - schema: wubi98_mint          # wubi98
+  - schema: wubi86_jidian        # wubi86 jidian
+  - schema: t9                   # t9 nine key full pinyin
+  # schemas below are adapted but not active
+  # - schema: double_pinyin_abc    # abc double pinyin
+  # - schema: double_pinyin_mspy   # microsoft double pinyin
+  # - schema: double_pinyin_sogou  # sogou double pinyin
+  # - schema: double_pinyin_ziguang # ziguang double pinyin
+  # - schema: double_pinyin         # natural code double pinyin
 
 switcher:
-  # 切换方案时显示的标题
+  # caption shown when switching schemas
   caption: 〔方案切换〕
-  # 切换方案的快捷键
+  # hotkeys for schema switching
   hotkeys:
     - Control+grave
     - Control+Shift+grave
-    # F4 和 JetBrains 的快捷键冲突
+    # F4 conflicts with jetbrains hotkeys
     # - F4
-  # 在切换方案时保留的选项
+  # options kept when switching schemas
   save_options:
-    - full_shape  # 保留全角模式
-    - ascii_punct # 保留西文模式
-    - transcription     # 保留汉字简繁体选项
+    - full_shape  # keep full shape mode
+    - ascii_punct # keep ascii punctuation mode
+    - transcription     # keep simplified traditional option
     - emoji_suggestion  # Emoji
-  # 折叠选项以节省空间，多方案时建议折叠 true ，一个方案建议展开 false
+  # fold options to save space fold for many schemas expand for one
   fold_options: true
-  # 对选项进行缩写
+  # abbreviate options
   abbreviate_options: true
-  # 选项之间的分隔符
+  # separator between options
   option_list_separator: '／'
 
 menu:
-  # 候选词个数
+  # candidate count
   page_size: 6
 
 translator:
-  # 启用自动造词
+  # enable auto phrase encoding
   enable_encoder: true
-  # 启用自动句子输入
+  # enable auto sentence
   enable_sentence: true
-  # 启用用户词典
+  # enable user dict
   enable_user_dict: true
-  # 对已上屏的词语进行自动编码以提高下次输入的命中率
+  # encode committed history to improve next hits
   encode_commit_history: true
 
 punctuator:
@@ -132,38 +132,38 @@ punctuator:
 
 key_binder:
   bindings:
-    # Emacs 风格的快捷键
-    - { when: composing, accept: Control+p, send: Up }     # composing 时,Control+p 等同于 Up 键
+    # emacs style bindings
+    - { when: composing, accept: Control+p, send: Up }     # Control+p acts as Up while composing
     - { when: composing, accept: Control+n, send: Down }
     - { when: composing, accept: Control+b, send: Left }
     - { when: composing, accept: Control+f, send: Right }
     - { when: composing, accept: Control+a, send: Home }
     - { when: composing, accept: Control+e, send: End }
     - { when: composing, accept: Control+d, send: Delete }
-    - { when: composing, accept: Control+k, send: Shift+Delete } # 删除到行尾
-    - { when: composing, accept: Control+g, send: Escape }       # 退出编码
-    - { when: composing, accept: Alt+v, send: Page_Up }          # 翻页
+    - { when: composing, accept: Control+k, send: Shift+Delete } # delete to line end
+    - { when: composing, accept: Control+g, send: Escape }       # exit composing
+    - { when: composing, accept: Alt+v, send: Page_Up }          # paging
     - { when: composing, accept: Control+v, send: Page_Down }
-    # 按词移动光标
-    - { when: composing, accept: ISO_Left_Tab, send: Shift+Left } # ISO_Left_Tab 是 Shift+Tab
+    # move cursor by word
+    - { when: composing, accept: ISO_Left_Tab, send: Shift+Left } # ISO_Left_Tab is Shift+Tab
     - { when: composing, accept: Shift+Tab, send: Shift+Left }
     - { when: composing, accept: Tab, send: Shift+Right }
-    # 翻页
-    - { when: paging, accept: minus, send: Page_Up }             # 使用`-`进行向上翻页（第一页时候无效）
-    - { when: has_menu, accept: equal, send: Page_Down }         # 使用`=`进行向下翻页
-    - { when: paging, accept: comma, send: Page_Up }             # 候选窗口翻页
+    # paging
+    - { when: paging, accept: minus, send: Page_Up }             # minus pages up not on first page
+    - { when: has_menu, accept: equal, send: Page_Down }         # equal pages down
+    - { when: paging, accept: comma, send: Page_Up }             # candidate window paging
     - { when: has_menu, accept: period, send: Page_Down }
-    - { when: predicting, accept: comma, send: comma }           # 在预编码模式下,不当作快捷键
+    - { when: predicting, accept: comma, send: comma }           # not a hotkey while predicting
     - { when: predicting, accept: period, send: period }
-    # 切换状态
-    - { when: always, accept: Control+Shift+1, select: .next }   # 切换输入方案
-    - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # 切换中/西文模式
-    - { when: always, accept: Control+Shift+3, toggle: full_shape } # 切换全角/半角
-    - { when: always, accept: Control+Shift+4, toggle: transcription } # 切换简体/繁体
-    - { when: always, accept: Control+Shift+5, toggle: extended_charset } # 切换扩展字符
-    - { when: always, accept: Shift+space, toggle: full_shape } # 另一种切换全角/半角的方式
-    - { when: always, accept: Control+period, toggle: ascii_punct } # 切换中/西文标点
-    # 将小键盘 0~9 . 映射到主键盘，数字金额大写的 Lua 如 R1234.5678 可使用小键盘输入
+    # toggle states
+    - { when: always, accept: Control+Shift+1, select: .next }   # switch schema
+    - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # toggle chinese english
+    - { when: always, accept: Control+Shift+3, toggle: full_shape } # toggle full half shape
+    - { when: always, accept: Control+Shift+4, toggle: transcription } # toggle simplified traditional
+    - { when: always, accept: Control+Shift+5, toggle: extended_charset } # toggle extended charset
+    - { when: always, accept: Shift+space, toggle: full_shape } # another full half shape toggle
+    - { when: always, accept: Control+period, toggle: ascii_punct } # toggle chinese english punctuation
+    # map numpad digits and dot to main keys so money lua like R1234.5678 works
     - {accept: KP_0, send: 0, when: composing}
     - {accept: KP_1, send: 1, when: composing}
     - {accept: KP_2, send: 2, when: composing}
@@ -175,27 +175,27 @@ key_binder:
     - {accept: KP_8, send: 8, when: composing}
     - {accept: KP_9, send: 9, when: composing}
     - {accept: KP_Decimal, send: period, when: composing}
-    # 将小键盘 + - * / 映射到主键盘，使计算器 如 1+2-3*4 可使用小键盘输入
+    # map numpad operators to main keys so calculator like 1+2-3*4 works
     - {accept: KP_Multiply, send: asterisk, when: composing}
     - {accept: KP_Add,      send: plus,     when: composing}
     - {accept: KP_Subtract, send: minus,    when: composing}
     - {accept: KP_Divide,   send: slash,    when: composing}
-    # 将小键盘回车映射到主键盘回车
+    # map numpad enter to main enter
     - {accept: KP_Enter,    send: Return,   when: composing}
 
 recognizer:
-  # 定义识别码的正则表达式规则
+  # recognizer regex patterns
   patterns:
-    email: "^[a-z][-_.0-9a-z]*@.*$"  # 匹配电子邮件地址
-    uppercase: "[A-Z][-_+.'0-9A-Za-z]*$"  # 匹配大写字母开头的字符串
-    url: "^(www[.]|https?:|ftp:|mailto:).*$|^[a-z]+[.].+$"  # 匹配 URL 或域名
+    email: "^[a-z][-_.0-9a-z]*@.*$"  # match email addresses
+    uppercase: "[A-Z][-_+.'0-9A-Za-z]*$"  # match strings starting with uppercase
+    url: "^(www[.]|https?:|ftp:|mailto:).*$|^[a-z]+[.].+$"  # match urls or domains
 
 ascii_composer:
-  # 定义切换到西文模式的快捷键
+  # keys switching to ascii mode
   switch_key:
-    Caps_Lock: commit_code  # 按下 Caps Lock 会直接上屏
-    Control_L: noop  # 按下左 Control 键不做任何操作
-    Control_R: noop  # 按下右 Control 键不做任何操作
-    Shift_L: commit_code  # 按下左 Shift 键会直接上屏
-    Shift_R: inline_ascii  # 按下右 Shift 键会临时切换到西文模式
-  good_old_caps_lock: true  # 启用经典的 Caps Lock 开启西文模式的方式
+    Caps_Lock: commit_code  # Caps_Lock commits code directly
+    Control_L: noop  # left Control does nothing
+    Control_R: noop  # right Control does nothing
+    Shift_L: commit_code  # left Shift commits code directly
+    Shift_R: inline_ascii  # right Shift enters temporary ascii mode
+  good_old_caps_lock: true  # classic Caps_Lock ascii behavior

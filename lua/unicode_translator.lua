@@ -1,8 +1,8 @@
--- Unicode 编码候选过滤器。
--- 作者：[Mintimate](https://github.com/Mintimate)
--- Unicode 功能必须作为独立 translator 工作，不能用全局 Lua filter
--- 包裹普通 script_translator；后者会在部分 librime 版本中破坏简拼的
--- 延迟候选展开。
+-- unicode candidate translator
+-- author Mintimate
+-- unicode must be a standalone translator not a global lua filter
+-- wrapping script_translator breaks lazy candidate expansion
+-- of abbreviations on some librime versions
 
 local unicode_translator = {}
 
@@ -100,7 +100,7 @@ function unicode_translator.func(input, seg, env)
     if input:sub(1, 2) == "Uc" then
         code = input:sub(3)
     elseif seg:has_tag("unicode") then
-        -- affix_segmentor 在部分 librime 版本中会先移除前缀。
+        -- affix_segmentor strips the prefix first on some librime versions
         code = input
     else
         return

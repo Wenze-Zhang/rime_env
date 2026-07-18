@@ -1,34 +1,34 @@
 -- https://github.com/amzxyz/rime_wanxiang
--- 万象家族 lua，小键盘行为控制：
---   - 小键盘数字：根据 kp_number_mode 决定 “参与编码 / 直接上屏”
---   - 主键盘数字：在有候选菜单时，用于选第 n 个候选
+-- wanxiang family lua numpad behavior control
+--   numpad digits follow kp_number_mode encode or commit directly
+--   main keyboard digits select the nth candidate when menu is open
 --
--- 用法示例（schema.yaml）：
+-- usage example schema.yaml
 --   engine:
 --     processors:
 --       - lua_processor@*kp_number_processor
---   # 小键盘模式（可省略，默认 auto）
---   # auto    : 空闲时直接上屏，输入中参与编码
---   # compose : 无论是否在输入中，小键盘都参与编码（不直接上屏）
+--   # numpad mode optional default auto
+--   # auto    commit directly when idle encode while composing
+--   # compose always encode never commit directly
 --   kp_number_mode: auto
 
 local RIME_PROCESS_RESULTS = {
-    kRejected = 0, -- 表示处理器明确拒绝了这个按键，停止处理链但不返回 true
-    kAccepted = 1, -- 表示处理器成功处理了这个按键，停止处理链并返回 true
-    kNoop = 2,     -- 表示处理器没有处理这个按键，继续传递给下一个处理器
+    kRejected = 0, -- processor rejected the key stop chain without true
+    kAccepted = 1, -- processor handled the key stop chain return true
+    kNoop = 2,     -- processor skipped continue to next processor
 }
 
--- Wanxiang Regex > lua --不支持断言够用了
+-- wanxiang regex to lua no assertions good enough
 local RegexParser = {}
 
 function RegexParser.normalize(regex)
     local p = regex
-    p = p:gsub("%(%?%:", "%(") -- 清理 (?:
-    -- 基础转义
+    p = p:gsub("%(%?%:", "%(") -- clean non capture groups
+    -- basic escapes
     p = p:gsub("\\d", "%%d"); p = p:gsub("\\D", "%%D")
     p = p:gsub("\\w", "%%w"); p = p:gsub("\\W", "%%W")
     p = p:gsub("\\s", "%%s"); p = p:gsub("\\S", "%%S")
-    -- 符号转义 (注意：\? -> %?，保留字面量问号)
+    -- symbol escapes keep literal question mark
     p = p:gsub("\\%.", "%%."); p = p:gsub("\\%^", "%%^")
     p = p:gsub("\\%$", "%%$"); p = p:gsub("\\%*", "%%*")
     p = p:gsub("\\%+", "%%+"); p = p:gsub("\\%-", "%%-")
@@ -39,16 +39,16 @@ function RegexParser.normalize(regex)
     return p
 end
 
--- 递归展开 ? 量词
--- 输入: "N[0-9]?A"
--- 输出: { "N[0-9]A", "NA" }
+-- recursively expand question quantifier
+-- input N[0-9]?A
+-- output N[0-9]A and NA
 local function expand_optional(pattern_list)
     local result = {}
     local has_expansion = false
 
     for _, pat in ipairs(pattern_list) do
-        -- 寻找第一个未转义的 ? (Regex量词)
-        -- 我们需要找到 ? 的位置，并判断它修饰的前一个原子是什么
+        -- find first unescaped question quantifier
+        -- locate the question mark and the atom it modifies
         local q_idx = nil
         local atom_start = nil
         local atom_end = nil
@@ -59,10 +59,10 @@ local function expand_optional(pattern_list)
             local char = string.sub(pat, i, i)
             
             if char == "%" then
-                -- 转义符，跳过下一个
+                -- escape skip next char
                 i = i + 2
             elseif char == "[" then
-                -- 集合 [...]
+                -- char set
                 local j = i + 1
                 while j <= len do
                     if string.sub(pat, j, j) == "]" and string.sub(pat, j-1, j-1) ~= "%" then
@@ -70,21 +70,21 @@ local function expand_optional(pattern_list)
                     end
                     j = j + 1
                 end
-                -- 检查后面是不是 ?
+                -- check whether question mark follows
                 if j < len and string.sub(pat, j+1, j+1) == "?" then
                     atom_start = i
                     atom_end = j
                     q_idx = j + 1
-                    break -- 找到目标
+                    break -- target found
                 end
                 i = j + 1
             elseif char == "?" then
-                -- 找到一个 ?，修饰前面一个字符
-                -- 注意：如果前面没有字符（比如开头），则是非法正则，忽略
+                -- found a question mark modifying previous char
+                -- ignore illegal regex with nothing before it
                 if i > 1 then
                     q_idx = i
                     atom_end = i - 1
-                    -- 判断前一个字符是否是转义结果 (如 %d)
+                    -- check whether previous char is an escape like %d
                     if atom_end > 1 and string.sub(pat, atom_end-1, atom_end-1) == "%" then
                         atom_start = atom_end - 1
                     else
@@ -100,9 +100,9 @@ local function expand_optional(pattern_list)
 
         if q_idx then
             has_expansion = true
-            -- 1. 保留原子 (去掉 ?)
+            -- 1 keep atom drop question mark
             local p1 = string.sub(pat, 1, atom_end) .. string.sub(pat, q_idx + 1)
-            -- 2. 删除原子 (去掉 原子+?)
+            -- 2 drop atom and question mark
             local p2 = string.sub(pat, 1, atom_start - 1) .. string.sub(pat, q_idx + 1)
             
             table.insert(result, p1)
@@ -181,11 +181,11 @@ end
 
 local function ensure_anchor(p)
     if not p or p == "" then return p end
-    -- 补 $
+    -- append dollar
     local last = string.sub(p, -1)
     local prev = string.sub(p, -2, -2)
     if last ~= "$" or (last == "$" and prev == "%") then p = p .. "$" end
-    -- 补 ^
+    -- prepend caret
     local first = string.sub(p, 1, 1)
     if first ~= "^" then p = "^" .. p end
     return p
@@ -194,9 +194,9 @@ end
 function RegexParser.convert(regex_str)
     if not regex_str or regex_str == "" then return {} end
     local norm = RegexParser.normalize(regex_str)
-    -- 1. 拆分 |
+    -- 1 split on pipe
     local list = RegexParser.smart_split(norm, "|")
-    -- 2. 展开 () 分组
+    -- 2 expand groups
     local loop = 0
     local changed = true
     while changed and loop < 5 do
@@ -204,10 +204,10 @@ function RegexParser.convert(regex_str)
         if #new_list > #list then list = new_list else changed = false end
         loop = loop + 1
     end
-    -- 3. 展开 ? 量词
-    -- 这会将带 ? 的正则裂变成多个确定的正则
+    -- 3 expand question quantifier
+    -- splits regex with question mark into multiple exact regexes
     list = expand_optional(list)
-    -- 4. 补全锚点
+    -- 4 add anchors
     for i, p in ipairs(list) do list[i] = ensure_anchor(p) end
     return list
 end
@@ -252,7 +252,7 @@ function load_regex_patterns(config, path)
 end
 
 
--- 小键盘键码映射
+-- numpad keycode map
 local KP = {
     [0xFFB1] = 1,  -- KP_1
     [0xFFB2] = 2,
@@ -267,12 +267,12 @@ local KP = {
 }
 local P = {}
 
--- [调试工具] 最小化日志打印 (如需调试请取消注释)
+-- debug minimal logging uncomment when needed
 -- local function log_info(msg)
 --    log.info("kp_number: " .. tostring(msg))
 -- end
 
--- 检查当前输入+数字是否匹配命令模式
+-- check whether input plus digit matches a command pattern
 local function is_function_code_after_digit(env, context, digit_char)
     if not context or not digit_char or digit_char == "" then return false end
     local code = context.input or ""
@@ -282,7 +282,7 @@ local function is_function_code_after_digit(env, context, digit_char)
     if not pats then return false end
 
     for _, pat in ipairs(pats) do
-        -- Lua pattern 匹配
+        -- lua pattern match
         if s:match(pat) then return true end
     end
     return false
@@ -303,8 +303,8 @@ function P.init(env)
     env.is_composing = context:is_composing()
     env.has_menu     = context:has_menu()
 
-    -- 从 wanxiang 模块加载并转译正则
-    -- 这一步会自动处理 YAML 正则到 Lua 模式的所有转换
+    -- load and translate regex from wanxiang module
+    -- handles all yaml regex to lua pattern conversion
     env.function_patterns = load_regex_patterns(config, "recognizer/patterns")
 
     -- log_info("Loaded " .. #(env.function_patterns or {}) .. " patterns.")
@@ -336,7 +336,7 @@ function P.func(key, env)
     local mode    = env.kp_mode or "auto"
     local page_sz = env.page_size
 
-    -- 1) 小键盘数字处理
+    -- 1 numpad digit handling
     local kp_num = KP[key.keycode]
     if kp_num ~= nil then
         -- log_info("Key: " .. (tostring(kp_num)) .. " pressed.")
@@ -346,14 +346,14 @@ function P.func(key, env)
         end
         local ch = tostring(kp_num)
 
-        -- 如果匹配到正则（如网址、反查），则拦截，强制作为编码输入
+        -- if a pattern matches like url or lookup force encode
         if is_function_code_after_digit(env, context, ch) then
             if context.push_input then context:push_input(ch)
             else context.input = (context.input or "") .. ch end
             return RIME_PROCESS_RESULTS.kAccepted
         end
 
-        -- 正常数字逻辑
+        -- normal digit logic
         if mode == "auto" then
             if env.is_composing then
                 if context.push_input then context:push_input(ch)
@@ -368,7 +368,7 @@ function P.func(key, env)
         return RIME_PROCESS_RESULTS.kAccepted
     end
 
-    -- 2) 主键盘数字处理
+    -- 2 main keyboard digit handling
     local r = key:repr() or ""
     if r:match("^[0-9]$") then
         if key:ctrl() or key:alt() or key:super() then
