@@ -40,7 +40,7 @@ bash scripts/install-themes.sh
 vendor 于 `themes/`，经 `install-themes.sh` 软链到 `~/.local/share/fcitx5/themes/`：
 
 - `catppuccin_mocha`（默认）— 来自 [catppuccin/fcitx5](https://github.com/catppuccin/fcitx5)（Mocha/Mauve）
-- `nord-dark` — 来自 [tonyfettes/fcitx5-nord](https://github.com/tonyfettes/fcitx5-nord)
+- `nord_dark` — 来自 [tonyfettes/fcitx5-nord](https://github.com/tonyfettes/fcitx5-nord)
 - `ocean_teal` — 自制，蓝绿色，参考 VS Code Material Theme Ocean
 - `novel_dark` — 自制，暖黄深色，参考 VS Code Gruvbox Dark
 
