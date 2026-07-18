@@ -1,26 +1,26 @@
 # Rime dictionary
-# encoding: utf-8
+# encoding utf-8
 #
-# 个性化词语 - by @Mintimate
-# 建议自定义短语或者词语追加在这里
+# personal words by Mintimate
+# append custom phrases here
 ---
 name: custom_simple
 version: "2023.11.30"
 sort: by_weight
 ...
 
-# 人名
-# 常用语
+# names
+# common phrases
 哈哈	ha ha	99
 macOS	mac	99
 可以	ke yi	99
-# 工具
+# tools
 颜文字	yan wen zi	100
-# (｡>ㅅ<｡)
+# kaomoji
 Mintimate	mintimate	1
 https://www.mintimate.cn	mintimate	2
 Mintimate's Blog	mintimate	3
-# 输入法主题
+# input method themes
 碧皓青	bi hao qing	99
 碧月青	bi yue qing	99
 蓝水鸭	lan shui ya	99

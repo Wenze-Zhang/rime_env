@@ -1,20 +1,20 @@
-# macOS日志文件
+# macos files
 .DS_Store
 
-# 用户配置文件
+# machine local state
 user.yaml
 installation.yaml
 
-# 本机同步/回收目录
+# local sync and trash dirs
 sync/
 trash/
 
-# 部署生成的文件
+# build artifacts
 build
 *.userdb
 
-# VSCode 项目文件
+# vscode workspace files
 *.code-workspace
 
-# 语言模型文件
+# language model files
 *.gram

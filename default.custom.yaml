@@ -1,9 +1,9 @@
-# 个人全局定制 —— 以 patch 方式覆写 default.yaml
-# 此文件属于「用户层」，update-upstream.sh 永远不会覆盖它
+# personal global patch over default.yaml
+# user layer file never overwritten by update-upstream.sh
 patch:
-  # 只启用 薄荷拼音-小鹤混输（全拼、小鹤双拼同时可用）
+  # enable only the mint flypy hybrid schema
   schema_list:
     - schema: rime_mint_flypy
 
-  # 候选词个数
+  # candidate count global default
   menu/page_size: 8

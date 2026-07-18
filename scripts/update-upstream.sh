@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
-# 从上游 Mintimate/oh-my-rime 拉取「自动更新层」文件（词库/lua/opencc 等）。
-# 用法：bash scripts/update-upstream.sh   （建议每 1~2 个月手动执行一次）
+# pull auto layer files dicts lua opencc from upstream oh-my-rime
+# usage bash scripts/update-upstream.sh recommended every one or two months
 #
-# 设计约定：
-#   - 只覆盖下方 FILES/DIRS 清单内的文件（自动更新层）；
-#   - 方案文件 rime_mint_flypy.schema.yaml 已裁剪并冻结在用户层，不在清单内；
-#   - custom 文件、themes/、scripts/、README 等用户层内容永不触碰；
-#   - 若上游改名导致清单中的路径不存在，脚本会列出缺失项并中止（不做部分覆盖），
-#     届时请人工对照上游仓库修订此清单。
+# rules
+#   only paths listed in FILES and DIRS below are overwritten
+#   schema file rime_mint_flypy.schema.yaml is trimmed and frozen in user layer
+#   custom files themes scripts and README are never touched
+#   missing upstream paths abort the run with a list so update the manifest manually
 #
-# 恢复纯全拼的方法（备忘）：从上游取回 rime_mint.schema.yaml 放入仓库根目录，
-# 并在 default.custom.yaml 的 schema_list 中加一行 `- schema: rime_mint`。
+# to restore plain full pinyin fetch rime_mint.schema.yaml from upstream
+# and add schema rime_mint to schema_list in default.custom.yaml
 set -euo pipefail
 
 UPSTREAM_TARBALL="https://github.com/Mintimate/oh-my-rime/archive/refs/heads/main.tar.gz"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# 自动更新层：单个文件
+# auto layer single files
 FILES=(
   default.yaml
   rime_mint.dict.yaml
@@ -39,7 +38,7 @@ FILES=(
   dicts/other_kaomoji.dict.yaml
 )
 
-# 自动更新层：整个目录（先删后拷，跟随上游增删文件）
+# auto layer whole directories removed then copied to follow upstream changes
 DIRS=(
   lua
   opencc

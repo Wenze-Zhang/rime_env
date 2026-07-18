@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# 将仓库内 themes/ 下的主题软链到 fcitx5 主题目录，并把默认主题设为 catppuccin_mocha。
-# 用法：bash scripts/install-themes.sh
+# symlink repo themes into the fcitx5 theme directory
+# usage bash scripts/install-themes.sh
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -16,8 +16,8 @@ for src in "$REPO_DIR"/themes/*/; do
 done
 
 mkdir -p "$(dirname "$CLASSICUI_CONF")"
-# Theme 用于浅色模式，DarkTheme 用于深色模式（UseDarkTheme=True 时生效）。
-# 仅在配置中不存在对应键时写入默认值；已有选择（含手动切换过的主题）一律保留。
+# Theme is for light mode DarkTheme for dark mode when UseDarkTheme is true
+# write defaults only when keys are missing keep existing choices
 for key in Theme DarkTheme; do
   if [[ ! -f "$CLASSICUI_CONF" ]] || ! grep -q "^$key=" "$CLASSICUI_CONF"; then
     printf '%s=%s\n' "$key" "$DEFAULT_THEME" >>"$CLASSICUI_CONF"
