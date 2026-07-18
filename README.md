@@ -41,8 +41,13 @@ vendor 于 `themes/`，经 `install-themes.sh` 软链到 `~/.local/share/fcitx5/
 
 - `catppuccin_mocha`（默认）— 来自 [catppuccin/fcitx5](https://github.com/catppuccin/fcitx5)（Mocha/Mauve）
 - `nord-dark` — 来自 [tonyfettes/fcitx5-nord](https://github.com/tonyfettes/fcitx5-nord)
+- `ocean_teal` — 自制，蓝绿色，参考 VS Code Material Theme Ocean
+- `novel_dark` — 自制，暖黄深色，参考 VS Code Gruvbox Dark
 
-切换：`fcitx5-configtool` → 附加组件 → 经典用户界面 → 主题。
+切换方式（二选一）：
+
+1. 图形界面：`fcitx5-configtool` → 附加组件 → 经典用户界面 → 主题（注意 `UseDarkTheme=True` 时深色模式实际生效的是「深色主题」一项）；
+2. 命令行：改 `~/.config/fcitx5/conf/classicui.conf` 的 `Theme=` 与 `DarkTheme=` 为主题目录名，然后 `fcitx5-remote -r` 重载。
 
 ## 新机器部署
 
