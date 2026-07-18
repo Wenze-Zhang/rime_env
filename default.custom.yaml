@@ -1,0 +1,9 @@
+# 个人全局定制 —— 以 patch 方式覆写 default.yaml
+# 此文件属于「用户层」，update-upstream.sh 永远不会覆盖它
+patch:
+  # 只启用 薄荷拼音-小鹤混输（全拼、小鹤双拼同时可用）
+  schema_list:
+    - schema: rime_mint_flypy
+
+  # 其他常用定制示例（需要时取消注释）：
+  # menu/page_size: 9          # 候选词个数改为 9 个
