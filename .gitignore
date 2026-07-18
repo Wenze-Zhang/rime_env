@@ -5,6 +5,10 @@
 user.yaml
 installation.yaml
 
+# 本机同步/回收目录
+sync/
+trash/
+
 # 部署生成的文件
 build
 *.userdb
