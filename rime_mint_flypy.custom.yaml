@@ -1,8 +1,10 @@
 # 个人方案级定制 —— 以 patch 方式覆写 rime_mint_flypy.schema.yaml
 # 此文件属于「用户层」，update-upstream.sh 永远不会覆盖它
-patch: {}
+patch:
+  # 候选词个数（方案文件里写死了 6，方案级会覆盖 default.yaml，所以必须在这里改）
+  menu/page_size: 8
 
-  # 常用定制示例（使用时删掉上面的 {} 并取消注释）：
+  # 常用定制示例（取消注释即可启用）：
   #
   # 默认开启繁体（switches 的顺序见 schema 文件）：
   # switches/@4/reset: 1
